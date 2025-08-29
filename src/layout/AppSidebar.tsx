@@ -5,17 +5,16 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
-  BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
   PageIcon,
-  PieChartIcon,
   PlugInIcon,
   TableIcon,
   UserCircleIcon,
+  TaskIcon,
+  SettingsIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
 
@@ -27,71 +26,80 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-  },
-  {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: "/profile",
-  },
-
-  {
-    name: "Forms",
-    icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  },
-  {
-    name: "Tables",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  },
-  {
-    name: "Pages",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
-    ],
-  },
-];
-
-const othersItems: NavItem[] = [
-  {
-    icon: <PieChartIcon />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-    ],
-  },
+    {
+        icon: <GridIcon />,
+        name: "Dashboard",
+        subItems: [
+            { name: "Analytics", path: "/dashboard/analytics" },
+        ],
+    },
+    {
+        icon: <UserCircleIcon />,
+        name: "CRM",
+        subItems: [
+            { name: "Clients", path: "/crm/clients" },
+            { name: "Leads", path: "/crm/leads" },
+            { name: "Quotes", path: "/crm/quotes" },
+            { name: "Contacts", path: "/crm/contacts" },
+        ],
+    },
+    {
+        icon: <PageIcon />,
+        name: "Projects",
+        subItems: [
+            { name: "All Projects", path: "/projects" },
+            { name: "Kanban Board", path: "/projects/kanban" },
+            { name: "Gantt Chart", path: "/projects/gantt" },
+        ],
+    },
+    {
+        icon: <TaskIcon />,
+        name: "Tasks",
+        path: "/tasks",
+    },
+    {
+        icon: <ListIcon />,
+        name: "BOM (Bill of Materials)",
+        subItems: [
+            { name: "All BOMs", path: "/bom" },
+            { name: "Create BOM", path: "/bom/create" },
+            { name: "BOM Templates", path: "/bom/templates" },
+        ],
+    },
+    {
+        icon: <TableIcon />,
+        name: "Purchase Orders (PO)",
+        subItems: [
+            { name: "All POs", path: "/po" },
+            { name: "Create PO", path: "/po/create" },
+            { name: "Suppliers", path: "/po/suppliers" },
+        ],
+    },
+    {
+        icon: <UserCircleIcon />,
+        name: "Staff",
+        subItems: [
+            { name: "Directory", path: "/staff/directory" },
+            { name: "Attendance", path: "/staff/attendance" },
+            { name: "Payroll", path: "/staff/payroll" },
+            { name: "Leave Management", path: "/staff/leave" },
+        ],
+    },
+    {
+        icon: <PlugInIcon />,
+        name: "Auth",
+        subItems: [
+            { name: "Login", path: "/signin" },
+            { name: "Register", path: "/signup" },
+            { name: "Forgot Password", path: "/auth/forgot-password" },
+            { name: "Profile", path: "/profile" },
+        ],
+    },
+    {
+        icon: <SettingsIcon />,
+        name: "Settings",
+        path: "/settings",
+    },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -239,14 +247,14 @@ const AppSidebar: React.FC = () => {
   useEffect(() => {
     // Check if the current path matches any submenu item
     let submenuMatched = false;
-    ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : othersItems;
+    ["main"].forEach((menuType) => {
+      const items = menuType === "main" ? navItems : [];
       items.forEach((nav, index) => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
             if (isActive(subItem.path)) {
               setOpenSubmenu({
-                type: menuType as "main" | "others",
+                type: menuType as "main",
                 index,
               });
               submenuMatched = true;
@@ -310,22 +318,16 @@ const AppSidebar: React.FC = () => {
       >
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
-            <>
+            <div className="flex items-center gap-2">
               <Image
                 className="dark:hidden"
-                src="/images/logo/logo.svg"
+                src="/images/logo/logo-icon.svg"
                 alt="Logo"
-                width={150}
-                height={40}
+                width={32}
+                height={32}
               />
-              <Image
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-            </>
+              <span className="text-xl font-bold">Nexus ERP</span>
+            </div>
           ) : (
             <Image
               src="/images/logo/logo-icon.svg"
@@ -354,23 +356,6 @@ const AppSidebar: React.FC = () => {
                 )}
               </h2>
               {renderMenuItems(navItems, "main")}
-            </div>
-
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
             </div>
           </div>
         </nav>
